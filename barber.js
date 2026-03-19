@@ -2,14 +2,6 @@
 let is_open = localStorage.getItem('is_open') !== 'false';
 const closedMessage = "Sorry bro, the barbershop is closed right now. We will be back soon!";
 
-// Time Slots Data
-const hours = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", 
-    "12:00", "12:30", "13:00", "14:00", "14:30", "15:00", 
-    "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", 
-    "18:30", "19:00", "19:30", "20:00"
-];
-
 function checkStatus() {
     const banner = document.getElementById('status-banner');
     const bookBtn = document.getElementById('book-btn');
@@ -34,20 +26,48 @@ function toggleShopStatus() {
     alert(`Shop is now ${is_open ? 'OPEN' : 'CLOSED'}`);
 }
 
-// Generate Time Slots
-function renderTimeSlots(date) {
+// Dynamic Slot Generation Logic
+function getSlotsForService(service) {
+    if (service === 'haircut') {
+        // Haircut: 10:00, 11:30, 14:00, 15:30 (1.5h blocks, lunch skip)
+        return ["10:00", "11:30", "14:00", "15:30"];
+    } else {
+        // Beard Trim: 30min blocks, skip 13:00-14:00 lunch
+        const slots = [];
+        for (let h = 10; h < 17; h++) {
+            if (h === 13) continue; // Lunch
+            slots.push(`${h}:00`, `${h}:30`);
+        }
+        return slots;
+    }
+}
+
+function renderTimeSlots() {
+    const service = document.getElementById('service').value;
+    const dateStr = document.getElementById('date').value;
     const grid = document.getElementById('time-grid');
     grid.innerHTML = '';
     
-    // Get taken slots from local storage (or mock for now)
-    const takenSlots = JSON.parse(localStorage.getItem(`taken_${date}`) || '[]');
+    if (!dateStr) return;
 
-    hours.forEach(time => {
+    const selectedDate = new Date(dateStr);
+    const now = new Date();
+    const isToday = selectedDate.toDateString() === now.toDateString();
+    
+    const slots = getSlotsForService(service);
+    const takenSlots = JSON.parse(localStorage.getItem(`taken_${dateStr}`) || '[]');
+
+    slots.forEach(time => {
+        const [hour, minute] = time.split(':').map(Number);
+        const slotDate = new Date(selectedDate);
+        slotDate.setHours(hour, minute, 0, 0);
+
         const slot = document.createElement('div');
         slot.className = 'time-slot';
         slot.innerText = time;
         
-        if (takenSlots.includes(time)) {
+        // Disable slots that are in the past (if today) or taken
+        if (takenSlots.includes(time) || (isToday && slotDate < now)) {
             slot.classList.add('taken');
         } else {
             slot.onclick = () => selectTime(slot, time);
@@ -57,22 +77,24 @@ function renderTimeSlots(date) {
 }
 
 function selectTime(element, time) {
-    // Remove selected from others
     document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
     element.classList.add('selected');
     document.getElementById('selected-time').value = time;
 }
 
-// Handle Date Change
-document.getElementById('date').addEventListener('change', (e) => {
-    renderTimeSlots(e.target.value);
-});
+// Initial Setup
+const dateInput = document.getElementById('date');
+const serviceInput = document.getElementById('service');
 
-// Setting default date (tomorrow)
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-document.getElementById('date').valueAsDate = tomorrow;
-renderTimeSlots(document.getElementById('date').value);
+// Block past dates
+const todayStr = new Date().toISOString().split('T')[0];
+dateInput.setAttribute('min', todayStr);
+dateInput.value = todayStr;
+
+dateInput.addEventListener('change', renderTimeSlots);
+serviceInput.addEventListener('change', renderTimeSlots);
+
+renderTimeSlots();
 
 const form = document.getElementById('book-form');
 if (form) {
@@ -94,18 +116,16 @@ if (form) {
         bookBtn.innerText = "Processing Transaction...";
         bookBtn.disabled = true;
 
-        // Save taken slot to simulate "taken" state locally
+        // Persistence
         const takenSlots = JSON.parse(localStorage.getItem(`taken_${date}`) || '[]');
         takenSlots.push(time);
         localStorage.setItem(`taken_${date}`, JSON.stringify(takenSlots));
 
-        // Artificial delay for premium feel
         setTimeout(() => {
-            alert(`SUCCESS! 400 SOM deducted from your ${bank.toUpperCase()} card.\n\nBooking for ${name} at ${time} on ${date} confirmed.`);
-            window.location.href = `https://mock-payment-gateway.com/${bank}?amount=400&to=AminURJ&user=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`;
+            alert(`SUCCESS! 400 SOM deducted from your ${bank.toUpperCase()} card.\nBooking confirmed for ${time}.`);
+            window.location.href = `https://mock-payment-gateway.com/${bank}?amount=400&to=AminURJ&user=${encodeURIComponent(name)}`;
         }, 2000);
     });
 }
 
-// Initial status check
 checkStatus();

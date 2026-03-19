@@ -26,6 +26,7 @@
         </div>
     </nav>
 
+    <!-- Home Section -->
     <header id="home">
         <div class="hero-content">
             <h1>URJ BARBERSHOP</h1>
@@ -34,6 +35,7 @@
         </div>
     </header>
 
+    <!-- Services Section -->
     <section class="container services" id="price">
         <div class="service-grid">
             <div class="glass-panel service-card">
@@ -49,10 +51,11 @@
         </div>
     </section>
 
+    <!-- Booking Section -->
     <section class="booking-section" id="booking">
         <div class="container">
             <div class="glass-panel booking-form">
-                <h2 style="margin-bottom: 20px; text-align: center;">Complete Your Booking</h2>
+                <h2 style="margin-bottom: 25px; text-align: center; color: var(--primary-color);">Complete Your Booking</h2>
                 <form id="book-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -69,8 +72,8 @@
                         <div class="form-group">
                             <label>Select Service</label>
                             <select id="service" required>
-                                <option value="haircut">Men's Haircut (Weekend) - 400 KGS</option>
-                                <option value="beard">Beard Trim (Friday) - 250 KGS</option>
+                                <option value="haircut">Men's Haircut (90 min) - 400 KGS</option>
+                                <option value="beard">Beard Trim (30 min) - 250 KGS</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -82,7 +85,7 @@
                     <div class="form-group">
                         <label>Select Time Slot</label>
                         <div id="time-grid" class="time-grid">
-                            <!-- JS will populate slots here -->
+                            <!-- JS dynamic population -->
                         </div>
                         <input type="hidden" id="selected-time" required>
                     </div>
@@ -96,26 +99,28 @@
                     </div>
                     
                     <button type="submit" class="btn-primary" id="book-btn">Confirm & Pay via QR</button>
-                    <p style="font-size: 0.8rem; color: #888; text-align: center; margin-top: 15px;">
-                        * Note: 400 SOM will be deducted automatically from your card.
+                    <p style="font-size: 0.85rem; color: #888; text-align: center; margin-top: 20px;">
+                        * 400 SOM will be deducted automatically from your card.
                     </p>
                 </form>
             </div>
         </div>
     </section>
 
+    <!-- Footer Area -->
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-info">
                 <h3>URJ Barbershop</h3>
                 <p>Naryn, UCA • Open Saturday & Sunday Only</p>
-                <br>
-                <p><strong>WhatsApp:</strong> +996 552 766 222</p>
-                <p><strong>Telegram:</strong> +996 552 766 222</p>
-                <p><strong>Instagram:</strong> _a1imamad0v_</p>
+                <div style="margin-top: 20px;">
+                    <p><strong>WhatsApp:</strong> +996 552 766 222</p>
+                    <p><strong>Telegram:</strong> +996 552 766 222</p>
+                    <p><strong>Instagram:</strong> _a1imamad0v_</p>
+                </div>
             </div>
             <div class="footer-social">
-                <a href="#" target="_blank">Instagram</a>
+                <a href="https://instagram.com/_a1imamad0v_" target="_blank">Instagram</a>
                 <a href="https://wa.me/996552766222" target="_blank">WhatsApp</a>
                 <a href="https://t.me/996552766222" target="_blank">Telegram</a>
             </div>
